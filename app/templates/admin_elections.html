@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Election Management - Biometric Voting System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('admin_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- Election Management -->
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+
+            <!-- Page Header -->
+
+            <section class="dashboard-welcome">
+
+                <div>
+
+                    <p class="dashboard-label">
+                        ADMINISTRATION
+                    </p>
+
+                    <h1>
+                        Election Management 🗳️
+                    </h1>
+
+                    <p>
+                        Create and manage elections in the system.
+                    </p>
+
+                </div>
+
+            </section>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="login-error" style="margin-bottom: 20px;">
+                {{ messages[0] }}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            <!-- Create Election -->
+
+            <section class="dashboard-card" style="margin-bottom: 30px;">
+
+                <div class="dashboard-card-icon">
+                    ➕
+                </div>
+
+                <h2>
+                    Create New Election
+                </h2>
+
+                <p>
+                    Add a new election to the voting system.
+                </p>
+
+
+                <form method="POST" action="{{ url_for('admin_elections') }}">
+
+
+                    <div class="form-group">
+
+                        <label for="election_name">
+                            Election Name
+                        </label>
+
+                        <input type="text" id="election_name" name="election_name"
+                            placeholder="e.g. MCA Student Council Election 2027" required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea id="description" name="description" rows="4" placeholder="Enter election description"
+                            required></textarea>
+
+                    </div>
+
+
+                    <div class="date-time-row">
+
+                        <div class="form-group">
+
+                            <label for="start_date">
+                                Start Date
+                            </label>
+
+                            <input type="date" id="start_date" name="start_date" required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="start_time">
+                                Start Time
+                            </label>
+
+                            <input type="time" id="start_time" name="start_time" required>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="date-time-row">
+
+                        <div class="form-group">
+
+                            <label for="end_date">
+                                End Date
+                            </label>
+
+                            <input type="date" id="end_date" name="end_date" required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="end_time">
+                                End Time
+                            </label>
+
+                            <input type="time" id="end_time" name="end_time" required>
+
+                        </div>
+
+                    </div>
+
+
+                    <button type="submit" class="dashboard-button">
+
+                        ➕ Create Election
+
+                    </button>
+
+                </form>
+
+            </section>
+
+
+            <!-- Existing Elections -->
+
+            <section class="dashboard-card">
+
+                <div class="dashboard-card-icon">
+                    📋
+                </div>
+
+                <h2>
+                    Existing Elections
+                </h2>
+
+                <p>
+                    Elections currently stored in the system.
+                </p>
+
+
+                {% if elections %}
+
+                {% for election in elections %}
+
+                <div class="election-card" style="margin-top: 20px;">
+
+                    <div class="election-icon">
+                        🗳️
+                    </div>
+
+
+                    <div class="election-details">
+
+                        <h3>
+                            {{ election.election_name }}
+                        </h3>
+
+                        <p>
+                            {{ election.description }}
+                        </p>
+
+
+                        <p class="election-dates">
+
+                            <strong>
+                                Starts:
+                            </strong>
+
+                            {{ election.start_date.strftime(
+                            '%d %b %Y, %I:%M %p'
+                            ) }}
+
+                            &nbsp;&nbsp;
+
+                            <strong>
+                                Ends:
+                            </strong>
+
+                            {{ election.end_date.strftime(
+                            '%d %b %Y, %I:%M %p'
+                            ) }}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Status:
+                            </strong>
+
+                            {% if election.status == "ACTIVE" %}
+
+                            <span class="status-success">
+                                ✓ ACTIVE
+                            </span>
+
+                            {% elif election.status == "COMPLETED" %}
+
+                            <span class="status-failed">
+                                ✓ COMPLETED
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-pending">
+                                ⏳ UPCOMING
+                            </span>
+
+                            {% endif %}
+
+                        </p>
+
+
+                        <!-- Election Status Actions -->
+
+                        <div style="margin-top: 15px;">
+
+                            {% if election.status == "UPCOMING" %}
+
+                            <form method="POST"
+                                action="{{ url_for('update_election_status', election_id=election.election_id) }}"
+                                style="display: inline;">
+
+                                <input type="hidden" name="status" value="ACTIVE">
+
+                                <button type="submit" class="dashboard-button">
+
+                                    ▶ Activate Election
+
+                                </button>
+
+                            </form>
+
+
+                            {% elif election.status == "ACTIVE" %}
+
+                            <form method="POST"
+                                action="{{ url_for('update_election_status', election_id=election.election_id) }}"
+                                style="display: inline;">
+
+                                <input type="hidden" name="status" value="COMPLETED">
+
+                                <button type="submit" class="dashboard-button">
+
+                                    ✓ Complete Election
+
+                                </button>
+
+                            </form>
+
+                            {% elif election.status == "COMPLETED" %}
+
+                            <span class="status-success">
+                                🏁 Election Completed
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                        <form method="POST" action="{{ url_for('delete_election', election_id=election.election_id) }}"
+                            style="margin-top: 15px;"
+                            onsubmit="return confirm('Are you sure you want to delete this election?');">
+
+                            <button type="submit" class="dashboard-button">
+
+                                🗑️ Delete Election
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+                {% else %}
+
+                <div class="election-card" style="margin-top: 20px;">
+
+                    <div class="election-icon">
+                        📋
+                    </div>
+
+                    <div class="election-details">
+
+                        <h3>
+                            No Elections Found
+                        </h3>
+
+                        <p>
+                            Create your first election using
+                            the form above.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- Back -->
+
+            <a href="{{ url_for('admin_dashboard') }}" class="back-link">
+
+                ← Back to Admin Dashboard
+
+            </a>
+
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

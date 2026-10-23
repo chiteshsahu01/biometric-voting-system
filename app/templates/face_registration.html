@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Face Registration - Biometric Voting System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('voter_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main class="verification-page">
+
+        <div class="verification-container">
+
+            <div class="verification-header">
+
+                <p class="dashboard-label">
+                    BIOMETRIC REGISTRATION
+                </p>
+
+                <h1>
+                    Register Your Face
+                </h1>
+
+                <p>
+                    Capture your face to create your
+                    registered biometric profile.
+                </p>
+
+            </div>
+
+
+            <section class="verification-card">
+
+                <div class="verification-icon">
+                    📷
+                </div>
+
+                <h2>
+                    Camera Capture
+                </h2>
+
+                <p class="verification-description">
+                    Position your face inside the camera frame
+                    and capture a clear image.
+                </p>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="login-error verification-flash">
+                    {{ messages[0] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+
+                <!-- Camera -->
+
+                <div class="camera-container">
+
+                    <video id="camera" autoplay playsinline>
+                    </video>
+
+                    <canvas id="canvas" style="display: none;">
+                    </canvas>
+
+                </div>
+
+
+                <!-- Camera Button -->
+
+                <button type="button" id="start-camera" class="verification-button">
+
+                    Start Camera
+
+                </button>
+
+
+                <button type="button" id="capture-face" class="verification-button" style="display: none;">
+
+                    Capture Face
+
+                </button>
+
+
+                <!-- Preview -->
+
+                <div id="preview-container" class="face-preview" style="display: none;">
+
+                    <h3>
+                        Captured Image
+                    </h3>
+
+                    <img id="preview" alt="Captured face">
+
+                </div>
+
+
+                <!-- Register -->
+
+                <button type="button" id="register-face" class="verification-button" style="display: none;">
+
+                    Register Face
+
+                </button>
+
+
+                <div id="result" class="face-result">
+                </div>
+
+
+                <p class="verification-note">
+
+                    🔒 This image is stored locally in the
+                    project's face data directory for testing.
+
+                </p>
+
+            </section>
+
+
+            <a href="{{ url_for('face_verification') }}" class="back-link">
+
+                ← Back to Face Verification
+
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <script>
+
+        const video =
+            document.getElementById("camera");
+
+        const canvas =
+            document.getElementById("canvas");
+
+        const startButton =
+            document.getElementById("start-camera");
+
+        const captureButton =
+            document.getElementById("capture-face");
+
+        const registerButton =
+            document.getElementById("register-face");
+
+        const previewContainer =
+            document.getElementById("preview-container");
+
+        const preview =
+            document.getElementById("preview");
+
+        const result =
+            document.getElementById("result");
+
+        let capturedImage = null;
+        let cameraStream = null;
+
+
+        // Start Camera
+
+        startButton.addEventListener(
+            "click",
+            async function () {
+
+                try {
+
+                    cameraStream =
+                        await navigator.mediaDevices.getUserMedia({
+                            video: true,
+                            audio: false
+                        });
+
+                    video.srcObject =
+                        cameraStream;
+
+                    startButton.style.display =
+                        "none";
+
+                    captureButton.style.display =
+                        "block";
+
+                } catch (error) {
+
+                    result.textContent =
+                        "Camera access denied or unavailable.";
+
+                }
+
+            }
+        );
+
+
+        // Capture Face
+
+        captureButton.addEventListener(
+            "click",
+            function () {
+
+                canvas.width =
+                    video.videoWidth;
+
+                canvas.height =
+                    video.videoHeight;
+
+                const context =
+                    canvas.getContext("2d");
+
+                context.drawImage(
+                    video,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                capturedImage =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.9
+                    );
+
+                preview.src =
+                    capturedImage;
+
+                previewContainer.style.display =
+                    "block";
+
+                registerButton.style.display =
+                    "block";
+
+                captureButton.style.display =
+                    "none";
+
+            }
+        );
+
+
+        // Register Face
+
+        registerButton.addEventListener(
+            "click",
+            async function () {
+
+                if (!capturedImage) {
+
+                    result.textContent =
+                        "Please capture your face first.";
+
+                    return;
+                }
+
+                const formData =
+                    new FormData();
+
+                formData.append(
+                    "image",
+                    capturedImage
+                );
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "{{ url_for('face_registration') }}",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+                    const data =
+                        await response.json();
+
+
+                    if (data.success) {
+
+                        result.textContent =
+                            "✓ " + data.message;
+
+                        result.className =
+                            "face-result success-result";
+
+                        registerButton.disabled =
+                            true;
+
+                        if (cameraStream) {
+
+                            cameraStream
+                                .getTracks()
+                                .forEach(
+                                    track => track.stop()
+                                );
+
+                        }
+
+                    } else {
+
+                        result.textContent =
+                            data.message;
+
+                        result.className =
+                            "face-result error-result";
+
+                    }
+
+                } catch (error) {
+
+                    result.textContent =
+                        "Registration failed. Please try again.";
+
+                    result.className =
+                        "face-result error-result";
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

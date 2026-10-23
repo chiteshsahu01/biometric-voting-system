@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Voter Profile - Biometric Voting System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('voter_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- Profile Page -->
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+
+            <!-- Header -->
+
+            <section class="dashboard-welcome">
+
+                <div>
+
+                    <p class="dashboard-label">
+                        VOTER PROFILE
+                    </p>
+
+                    <h1>
+                        My Profile 👤
+                    </h1>
+
+                    <p>
+                        View your registered voter information.
+                    </p>
+
+                    {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="login-error admin-flash">
+                        {{ messages[0] }}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+
+                </div>
+
+                <div class="voter-badge">
+                    👤
+                    <span>
+                        {{ voter.status }}
+                    </span>
+                </div>
+
+            </section>
+
+
+            <!-- Personal Information -->
+
+            <section class="dashboard-card">
+
+                <div class="dashboard-card-icon">
+                    👤
+                </div>
+
+                <h2>
+                    Personal Information
+                </h2>
+
+                <div class="election-card" style="margin-top: 20px;">
+
+                    <div class="election-details">
+
+                        <p>
+                            <strong>
+                                Full Name:
+                            </strong>
+
+                            {{ voter.full_name }}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Voter Number:
+                            </strong>
+
+                            {{ voter.voter_number }}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Date of Birth:
+                            </strong>
+
+                            {{ voter.date_of_birth or "Not provided" }}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Gender:
+                            </strong>
+
+                            {{ voter.gender or "Not provided" }}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Mobile:
+                            </strong>
+
+                            {{ voter.mobile or "Not provided" }}
+                        </p>
+
+                        <p>
+                            <strong>
+                                Address:
+                            </strong>
+
+                            {{ voter.address or "Not provided" }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Verification Information -->
+
+            <section class="dashboard-card" style="margin-top: 30px;">
+
+                <div class="dashboard-card-icon">
+                    🔐
+                </div>
+
+                <h2>
+                    Verification Status
+                </h2>
+
+
+                <div class="election-card" style="margin-top: 20px;">
+
+                    <div class="election-details">
+
+                        <p>
+
+                            <strong>
+                                Voter Account:
+                            </strong>
+
+                            {% if voter.status == "VERIFIED" %}
+
+                            <span class="status-success">
+                                ✓ VERIFIED
+                            </span>
+
+                            {% elif voter.status == "BLOCKED" %}
+
+                            <span class="status-failed">
+                                ✕ BLOCKED
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-pending">
+                                ⏳ PENDING
+                            </span>
+
+                            {% endif %}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Face Verification:
+                            </strong>
+
+                            {% if verification and verification.verification_status == "VERIFIED" %}
+
+                            <span class="status-success">
+                                ✓ VERIFIED
+                            </span>
+
+                            {% elif verification and verification.verification_status == "REGISTERED" %}
+
+                            <span class="status-registered">
+                                REGISTERED
+                            </span>
+
+                            {% elif verification and verification.verification_status == "FAILED" %}
+
+                            <span class="status-failed">
+                                ✕ FAILED
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-pending">
+                                NOT REGISTERED
+                            </span>
+
+                            {% endif %}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Security Information -->
+
+            <section class="security-card" style="margin-top: 30px;">
+
+                <div class="security-icon">
+                    🔒
+                </div>
+
+                <div>
+
+                    <h3>
+                        Your Information is Secure
+                    </h3>
+
+                    <p>
+                        Your voter information and biometric data
+                        are used only for secure identity verification.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Back -->
+
+            <a href="{{ url_for('voter_dashboard') }}" class="back-link">
+
+                ← Back to Voter Dashboard
+
+            </a>
+
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

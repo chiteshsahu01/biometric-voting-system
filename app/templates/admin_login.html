@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Admin Login - Biometric Voting System
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+    <!-- Navbar -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('home') }}">
+                    Home
+                </a>
+
+                <a href="{{ url_for('voter_login') }}">
+                    Voter Login
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- Admin Login -->
+
+    <main class="login-page">
+
+        <div class="login-card">
+
+            <div class="login-icon">
+                🔐
+            </div>
+
+            <p class="dashboard-label">
+                ADMINISTRATOR
+            </p>
+
+            <h1>
+                Admin Login
+            </h1>
+
+            <p class="login-subtitle">
+                Sign in to manage the voting system.
+            </p>
+
+
+            <!-- Flash Messages -->
+
+            {% with messages = get_flashed_messages() %}
+
+                {% if messages %}
+
+                    <div class="flash-message">
+
+                        {% for message in messages %}
+
+                            <p>
+                                {{ message }}
+                            </p>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <!-- Login Form -->
+
+            <form method="POST"
+                  action="{{ url_for('admin_login') }}">
+
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Admin Username
+                    </label>
+
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter admin username"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter admin password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="login-button">
+
+                    Login as Admin
+
+                </button>
+
+            </form>
+
+
+            <div class="login-info">
+
+                <span>
+                    🛡️
+                </span>
+
+                <p>
+                    Admin access is restricted to authorized users.
+                </p>
+
+            </div>
+
+
+            <a href="{{ url_for('home') }}"
+               class="back-link">
+
+                ← Back to Home
+
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

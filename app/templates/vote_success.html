@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Vote Submitted - Biometric Voting System
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('voter_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <main class="success-page">
+
+        <div class="success-card">
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <p class="dashboard-label">
+                VOTE SUBMITTED
+            </p>
+
+            <h1>
+                Your Vote Has Been Submitted!
+            </h1>
+
+            <p class="success-message">
+                Thank you, {{ voter.full_name }}.
+                Your vote has been securely recorded.
+            </p>
+
+
+            <div class="success-election">
+
+                <span>
+                    Election
+                </span>
+
+                <strong>
+                    {{ election.election_name }}
+                </strong>
+
+            </div>
+
+
+            <div class="success-security">
+
+                🔒
+                Your vote has been recorded successfully
+                and cannot be changed.
+
+            </div>
+
+
+            <a href="{{ url_for('voter_dashboard') }}"
+               class="success-button">
+
+                Return to Dashboard
+
+            </a>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

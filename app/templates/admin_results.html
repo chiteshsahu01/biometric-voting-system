@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Election Results - Biometric Voting System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('admin_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- Results -->
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+
+            <!-- Header -->
+
+            <section class="dashboard-welcome">
+
+                <div>
+
+                    <p class="dashboard-label">
+                        ADMINISTRATION
+                    </p>
+
+                    <h1>
+                        Election Results 📊
+                    </h1>
+
+                    <p>
+                        View election voting results and statistics.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Election Selector -->
+
+            <section class="dashboard-card"
+                     style="margin-bottom: 30px;">
+
+                <div class="dashboard-card-icon">
+                    🗳️
+                </div>
+
+                <h2>
+                    Select Election
+                </h2>
+
+                <form method="GET"
+                      action="{{ url_for('admin_results') }}">
+
+                    <div class="form-group">
+
+                        <label for="election_id">
+                            Election
+                        </label>
+
+                        <select
+                            id="election_id"
+                            name="election_id"
+                            onchange="this.form.submit()">
+
+                            {% for item in elections %}
+
+                            <option
+                                value="{{ item.election_id }}"
+                                {% if election and item.election_id == election.election_id %}
+                                selected
+                                {% endif %}>
+
+                                {{ item.election_name }}
+
+                                ({{ item.status }})
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+
+            {% if election %}
+
+
+            <!-- Election Information -->
+
+            <section class="election-card">
+
+                <div class="election-icon">
+                    🗳️
+                </div>
+
+                <div class="election-details">
+
+                    <h3>
+                        {{ election.election_name }}
+                    </h3>
+
+                    <p>
+                        {{ election.description }}
+                    </p>
+
+                    <p class="election-dates">
+
+                        <strong>
+                            Starts:
+                        </strong>
+
+                        {{ election.start_date.strftime(
+                            '%d %b %Y, %I:%M %p'
+                        ) }}
+
+                        &nbsp;&nbsp;
+
+                        <strong>
+                            Ends:
+                        </strong>
+
+                        {{ election.end_date.strftime(
+                            '%d %b %Y, %I:%M %p'
+                        ) }}
+
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Total Votes -->
+
+            <section class="dashboard-cards"
+                     style="margin-top: 30px;">
+
+                <div class="dashboard-card">
+
+                    <div class="dashboard-card-icon">
+                        🗳️
+                    </div>
+
+                    <h3>
+                        Total Votes
+                    </h3>
+
+                    <p style="font-size: 32px; font-weight: bold;">
+                        {{ total_votes }}
+                    </p>
+
+                </div>
+
+
+                <div class="dashboard-card">
+
+                    <div class="dashboard-card-icon">
+                        👥
+                    </div>
+
+                    <h3>
+                        Candidates
+                    </h3>
+
+                    <p style="font-size: 32px; font-weight: bold;">
+                        {{ results|length }}
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Winner -->
+
+            {% if winner %}
+
+            <section class="security-card"
+                     style="margin-top: 30px;">
+
+                <div class="security-icon">
+                    🏆
+                </div>
+
+                <div>
+
+                    <h3>
+                        Current Winner
+                    </h3>
+
+                    <p>
+
+                        <strong>
+                            {{ winner.candidate.candidate_name }}
+                        </strong>
+
+                        — {{ winner.vote_count }} votes
+
+                    </p>
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- Candidate Results -->
+
+            <section class="dashboard-card"
+                     style="margin-top: 30px;">
+
+                <div class="dashboard-card-icon">
+                    📊
+                </div>
+
+                <h2>
+                    Candidate Results
+                </h2>
+
+                {% if results %}
+
+                    {% for item in results %}
+
+                    <div class="election-card"
+                         style="margin-top: 20px;">
+
+                        <div class="election-icon">
+
+                            {{ item.candidate.symbol or "🗳️" }}
+
+                        </div>
+
+
+                        <div class="election-details">
+
+                            <h3>
+                                {{ item.candidate.candidate_name }}
+                            </h3>
+
+                            <p>
+                                {{ item.candidate.party_name or "Independent" }}
+                            </p>
+
+                            <p>
+
+                                <strong>
+                                    Votes:
+                                </strong>
+
+                                {{ item.vote_count }}
+
+                                &nbsp;&nbsp;
+
+                                <strong>
+                                    Percentage:
+                                </strong>
+
+                                {{ item.percentage }}%
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <div class="election-card"
+                         style="margin-top: 20px;">
+
+                        <div class="election-icon">
+                            📋
+                        </div>
+
+                        <div class="election-details">
+
+                            <h3>
+                                No Candidates
+                            </h3>
+
+                            <p>
+                                No candidates are registered for this election.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            {% else %}
+
+            <section class="security-card">
+
+                <div class="security-icon">
+                    📋
+                </div>
+
+                <div>
+
+                    <h3>
+                        No Election Available
+                    </h3>
+
+                    <p>
+                        There are currently no elections in the system.
+                    </p>
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- Back -->
+
+            <a href="{{ url_for('admin_dashboard') }}"
+               class="back-link">
+
+                ← Back to Admin Dashboard
+
+            </a>
+
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

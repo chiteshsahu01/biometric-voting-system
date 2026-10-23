@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Candidate - Biometric Voting System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('admin_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- Edit Candidate -->
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+
+            <!-- Header -->
+
+            <section class="dashboard-welcome">
+
+                <div>
+
+                    <p class="dashboard-label">
+                        ADMINISTRATION
+                    </p>
+
+                    <h1>
+                        Edit Candidate ✏️
+                    </h1>
+
+                    <p>
+                        Update candidate information.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Edit Form -->
+
+            <section class="dashboard-card">
+
+                <div class="dashboard-card-icon">
+                    ✏️
+                </div>
+
+                <h2>
+                    Candidate Details
+                </h2>
+
+                <p>
+                    Modify the candidate information below.
+                </p>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="login-error admin-flash">
+                    {{ messages[0] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+
+                <form method="POST" action="{{ url_for('edit_candidate', candidate_id=candidate.candidate_id) }}">
+
+
+                    <!-- Election -->
+
+                    <div class="form-group">
+
+                        <label for="election_id">
+                            Election
+                        </label>
+
+                        <select id="election_id" name="election_id" required>
+
+                            {% for election in elections %}
+
+                            <option value="{{ election.election_id }}" {% if election.election_id==candidate.election_id
+                                %}selected{% endif %}>
+
+                                {{ election.election_name }}
+                                ({{ election.status }})
+
+                            </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Candidate Name -->
+
+                    <div class="form-group">
+
+                        <label for="candidate_name">
+                            Candidate Name
+                        </label>
+
+                        <input type="text" id="candidate_name" name="candidate_name"
+                            value="{{ candidate.candidate_name }}" required>
+
+                    </div>
+
+
+                    <!-- Party -->
+
+                    <div class="form-group">
+
+                        <label for="party_name">
+                            Party / Group Name
+                        </label>
+
+                        <input type="text" id="party_name" name="party_name" value="{{ candidate.party_name or '' }}">
+
+                    </div>
+
+
+                    <!-- Symbol -->
+
+                    <div class="form-group">
+
+                        <label for="symbol">
+                            Election Symbol
+                        </label>
+
+                        <input type="text" id="symbol" name="symbol" value="{{ candidate.symbol or '' }}">
+
+                    </div>
+
+
+                    <!-- Description -->
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea id="description" name="description"
+                            rows="4">{{ candidate.description or '' }}</textarea>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+
+                    <button type="submit" class="dashboard-button">
+
+                        💾 Update Candidate
+
+                    </button>
+
+                </form>
+
+
+                <br>
+
+
+                <a href="{{ url_for('admin_candidates') }}" class="back-link">
+
+                    ← Back to Candidate Management
+
+                </a>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Biometric Voting System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <div class="logo">
+            🗳️ Biometric Voting System
+        </div>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+
+    <main class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Secure & Smart
+                <span>Biometric Voting</span>
+            </h1>
+
+            <p>
+                A secure voting platform using biometric
+                verification to help prevent unauthorized
+                and duplicate voting.
+            </p>
+
+            <div class="buttons">
+                <a href="{{ url_for('voter_login') }}" class="btn primary">Voter Login</a>
+
+                <a href="{{ url_for('admin_login') }}" class="btn secondary">
+                    Admin Login
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <section class="features">
+
+        <h2>System Features</h2>
+
+        <div class="feature-container">
+
+            <div class="feature-card">
+                <div class="icon">🔐</div>
+                <h3>Secure Authentication</h3>
+                <p>
+                    Secure login and voter verification.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">👤</div>
+                <h3>Biometric Verification</h3>
+                <p>
+                    Face-based identity verification.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">🗳️</div>
+                <h3>One Person, One Vote</h3>
+                <p>
+                    Duplicate voting is prevented.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">📊</div>
+                <h3>Election Results</h3>
+                <p>
+                    View election results efficiently.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        <p>© 2026 Biometric Voting System | MCA Minor Project</p>
+    </footer>
+
+</body>
+
+</html>

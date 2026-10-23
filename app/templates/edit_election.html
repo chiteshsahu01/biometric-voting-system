@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Election - Biometric Voting System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('admin_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- Edit Election -->
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+
+            <!-- Header -->
+
+            <section class="dashboard-welcome">
+
+                <div>
+
+                    <p class="dashboard-label">
+                        ADMINISTRATION
+                    </p>
+
+                    <h1>
+                        Edit Election ✏️
+                    </h1>
+
+                    <p>
+                        Update election information.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Edit Form -->
+
+            <section class="dashboard-card">
+
+                <div class="dashboard-card-icon">
+                    ✏️
+                </div>
+
+                <h2>
+                    Election Details
+                </h2>
+
+                <p>
+                    Modify the election information below.
+                </p>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="login-error admin-flash">
+                    {{ messages[0] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+
+                <form method="POST" action="{{ url_for('edit_election', election_id=election.election_id) }}">
+
+
+                    <!-- Election Name -->
+
+                    <div class="form-group">
+
+                        <label for="election_name">
+                            Election Name
+                        </label>
+
+                        <input type="text" id="election_name" name="election_name" value="{{ election.election_name }}"
+                            required>
+
+                    </div>
+
+
+                    <!-- Description -->
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea id="description" name="description" rows="4"
+                            required>{{ election.description or '' }}</textarea>
+
+                    </div>
+
+
+                    <!-- Start Date -->
+
+                    <div class="form-group">
+
+                        <label for="start_date">
+                            Start Date & Time
+                        </label>
+
+                        <input type="datetime-local" id="start_date" name="start_date"
+                            value="{{ election.start_date.strftime('%Y-%m-%dT%H:%M') }}" required>
+
+                    </div>
+
+
+                    <!-- End Date -->
+
+                    <div class="form-group">
+
+                        <label for="end_date">
+                            End Date & Time
+                        </label>
+
+                        <input type="datetime-local" id="end_date" name="end_date"
+                            value="{{ election.end_date.strftime('%Y-%m-%dT%H:%M') }}" required>
+
+                    </div>
+
+
+                    <!-- Update -->
+
+                    <button type="submit" class="dashboard-button">
+
+                        💾 Update Election
+
+                    </button>
+
+                </form>
+
+
+                <br>
+
+
+                <a href="{{ url_for('admin_elections') }}" class="back-link">
+
+                    ← Back to Election Management
+
+                </a>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

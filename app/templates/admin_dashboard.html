@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Biometric Voting System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('admin_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- Admin Dashboard -->
+
+    <main class="dashboard-page">
+
+        <div class="dashboard-container">
+
+
+            <!-- Welcome -->
+
+            <section class="dashboard-welcome">
+
+                <div>
+
+                    <p class="dashboard-label">
+                        ADMINISTRATOR DASHBOARD
+                    </p>
+
+                    <h1>
+                        Welcome, Admin 👋
+                    </h1>
+
+                    <p>
+                        Manage elections, candidates and voters.
+                    </p>
+
+                </div>
+
+
+                <div class="voter-badge">
+                    🛡️
+                    <span>Administrator</span>
+                </div>
+
+            </section>
+
+
+            <!-- Management Cards -->
+
+            <section class="dashboard-cards">
+
+
+                <!-- Election Management -->
+
+                <div class="dashboard-card">
+
+                    <div class="dashboard-card-icon">
+                        🗳️
+                    </div>
+
+                    <h3>
+                        Election Management
+                    </h3>
+
+                    <p>
+                        Create and manage elections.
+                    </p>
+
+                    <a href="{{ url_for('admin_elections') }}" class="dashboard-button">
+                        Manage Elections
+                    </a>
+
+                </div>
+
+
+                <!-- Candidate Management -->
+
+                <div class="dashboard-card">
+
+                    <div class="dashboard-card-icon">
+                        👤
+                    </div>
+
+                    <h3>
+                        Candidate Management
+                    </h3>
+
+                    <p>
+                        Add and manage election candidates.
+                    </p>
+
+                    <a href="{{ url_for('admin_candidates') }}" class="dashboard-button">
+                        Manage Candidates
+                    </a>
+
+                </div>
+
+
+                <!-- Voter Management -->
+
+                <div class="dashboard-card">
+
+                    <div class="dashboard-card-icon">
+                        👥
+                    </div>
+
+                    <h3>
+                        Voter Management
+                    </h3>
+
+                    <p>
+                        View and manage registered voters.
+                    </p>
+
+                    <a href="{{ url_for('admin_voters') }}" class="dashboard-button">
+                        Manage Voters
+                    </a>
+
+                </div>
+
+
+                <!-- Results -->
+
+                <div class="dashboard-card">
+
+                    <div class="dashboard-card-icon">
+                        📊
+                    </div>
+
+                    <h3>
+                        Election Results
+                    </h3>
+
+                    <p>
+                        View voting results and statistics.
+                    </p>
+
+                    <a href="{{ url_for('admin_results') }}" class="dashboard-button">
+                        View Results
+                    </a>
+
+                </div>
+
+
+            </section>
+
+
+            <!-- System Information -->
+
+            <section class="security-card">
+
+                <div class="security-icon">
+                    🔐
+                </div>
+
+                <div>
+
+                    <h3>
+                        Secure Administration
+                    </h3>
+
+                    <p>
+                        Only authorized administrators can manage
+                        elections, voters, candidates and results.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>

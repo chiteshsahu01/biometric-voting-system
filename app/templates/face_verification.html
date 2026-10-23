@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Face Verification - Biometric Voting System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+
+
+<body>
+
+    <!-- Navbar -->
+
+    <header class="navbar">
+
+        <div class="nav-container">
+
+            <div class="logo">
+                📋 Biometric Voting System
+            </div>
+
+            <nav>
+
+                <a href="{{ url_for('voter_dashboard') }}">
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('voter_logout') }}">
+                    Logout
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+
+    <!-- Face Verification -->
+
+    <main class="verification-page">
+
+        <div class="verification-container">
+
+
+            <!-- Header -->
+
+            <div class="verification-header">
+
+                <p class="dashboard-label">
+                    BIOMETRIC VERIFICATION
+                </p>
+
+                <h1>
+                    Face Verification
+                </h1>
+
+                <p>
+                    Verify your identity using facial recognition
+                    before casting your vote.
+                </p>
+
+            </div>
+
+
+            <!-- Verification Card -->
+
+            <section class="verification-card">
+
+
+                <div class="verification-icon">
+                    🔐
+                </div>
+
+
+                <h2>
+                    Identity Verification
+                </h2>
+
+
+                <p class="verification-description">
+
+                    Your face will be verified against your
+                    registered biometric data.
+
+                </p>
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                <div class="login-error verification-flash">
+                    {{ messages[0] }}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+
+                <!-- Status -->
+
+                <div class="verification-status">
+
+                    <span>
+                        Current Status
+                    </span>
+
+
+                    {% if verification %}
+
+                    {% if verification.verification_status == "VERIFIED" %}
+
+                    <strong class="status-success">
+                        ✓ VERIFIED
+                    </strong>
+
+                    {% elif verification.verification_status == "REGISTERED" %}
+
+                    <strong class="status-registered">
+                        REGISTERED
+                    </strong>
+
+                    {% elif verification.verification_status == "FAILED" %}
+
+                    <strong class="status-failed">
+                        FAILED
+                    </strong>
+
+                    {% else %}
+
+                    <strong class="status-pending">
+                        NOT REGISTERED
+                    </strong>
+
+                    {% endif %}
+
+                    {% else %}
+
+                    <strong class="status-pending">
+                        NOT REGISTERED
+                    </strong>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Camera -->
+
+                <div class="camera-box">
+
+                    <video id="verification-camera" autoplay playsinline>
+                    </video>
+
+
+                    <canvas id="verification-canvas" style="display: none;">
+                    </canvas>
+
+                </div>
+
+
+                <!-- Camera Buttons -->
+
+                <button type="button" id="start-verification" class="verification-button">
+
+                    📷 Start Camera
+
+                </button>
+
+
+                <button type="button" id="capture-verification" class="verification-button" style="display: none;">
+
+                    🔐 Verify My Face
+
+                </button>
+
+
+                <!-- Verification Result -->
+
+                <div id="verification-result" class="face-result">
+                </div>
+
+
+                <!-- Register Face -->
+
+                <a href="{{ url_for('face_registration') }}" class="verification-button face-button">
+
+                    📸 Register / Capture Face
+
+                </a>
+
+
+                <p class="verification-note">
+
+                    🔒 Your biometric information is used only
+                    for identity verification.
+
+                </p>
+
+
+            </section>
+
+
+            <!-- Back -->
+
+            <a href="{{ url_for('voter_dashboard') }}" class="back-link">
+
+                ← Back to Dashboard
+
+            </a>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- Face Verification JavaScript -->
+
+    <script>
+
+        const video =
+            document.getElementById("verification-camera");
+
+        const canvas =
+            document.getElementById("verification-canvas");
+
+        const startButton =
+            document.getElementById("start-verification");
+
+        const captureButton =
+            document.getElementById("capture-verification");
+
+        const resultBox =
+            document.getElementById("verification-result");
+
+
+        let cameraStream = null;
+
+
+        /*
+         * Start Camera
+         */
+
+        startButton.addEventListener(
+            "click",
+            async function () {
+
+                try {
+
+                    cameraStream =
+                        await navigator.mediaDevices.getUserMedia({
+                            video: true,
+                            audio: false
+                        });
+
+
+                    video.srcObject =
+                        cameraStream;
+
+
+                    startButton.style.display =
+                        "none";
+
+
+                    captureButton.style.display =
+                        "block";
+
+
+                    resultBox.textContent =
+                        "Camera ready. Position your face and click Verify My Face.";
+
+                    resultBox.className =
+                        "face-result";
+
+
+                }
+
+                catch (error) {
+
+                    console.error(error);
+
+
+                    resultBox.textContent =
+                        "Camera access denied or unavailable.";
+
+
+                    resultBox.className =
+                        "face-result error-result";
+
+                }
+
+            }
+        );
+
+
+        /*
+         * Capture Face and Verify
+         */
+
+        captureButton.addEventListener(
+            "click",
+            async function () {
+
+
+                if (!video.videoWidth) {
+
+                    resultBox.textContent =
+                        "Camera is not ready yet.";
+
+                    return;
+
+                }
+
+
+                /*
+                 * Set canvas size
+                 */
+
+                canvas.width =
+                    video.videoWidth;
+
+                canvas.height =
+                    video.videoHeight;
+
+
+                /*
+                 * Capture current video frame
+                 */
+
+                const context =
+                    canvas.getContext("2d");
+
+
+                context.drawImage(
+                    video,
+                    0,
+                    0,
+                    canvas.width,
+                    canvas.height
+                );
+
+
+                /*
+                 * Convert image to Base64
+                 */
+
+                const imageData =
+                    canvas.toDataURL(
+                        "image/jpeg",
+                        0.9
+                    );
+
+
+                resultBox.textContent =
+                    "Verifying your face...";
+
+
+                resultBox.className =
+                    "face-result";
+
+
+                captureButton.disabled =
+                    true;
+
+
+                /*
+                 * Send image to Flask
+                 */
+
+                const formData =
+                    new FormData();
+
+
+                formData.append(
+                    "image",
+                    imageData
+                );
+
+
+                try {
+
+
+                    const response =
+                        await fetch(
+                            "{{ url_for('face_verification_check') }}",
+                            {
+                                method: "POST",
+                                body: formData
+                            }
+                        );
+
+
+                    const data =
+                        await response.json();
+
+
+                    /*
+                     * Successful verification
+                     */
+
+                    if (
+                        data.success &&
+                        data.verified
+                    ) {
+
+
+                        resultBox.textContent =
+                            "✓ " +
+                            data.message +
+                            " Confidence: " +
+                            data.confidence +
+                            "%";
+
+
+                        resultBox.className =
+                            "face-result success-result";
+
+
+                        /*
+                         * Stop camera
+                         */
+
+                        if (cameraStream) {
+
+                            cameraStream
+                                .getTracks()
+                                .forEach(
+                                    track => track.stop()
+                                );
+
+                        }
+
+
+                        captureButton.style.display =
+                            "none";
+
+
+                    }
+
+
+                    /*
+                     * Failed verification
+                     */
+
+                    else {
+
+
+                        resultBox.textContent =
+                            "✗ " +
+                            data.message;
+
+
+                        resultBox.className =
+                            "face-result error-result";
+
+
+                        captureButton.disabled =
+                            false;
+
+                    }
+
+
+                }
+
+
+                catch (error) {
+
+
+                    console.error(error);
+
+
+                    resultBox.textContent =
+                        "Verification request failed.";
+
+
+                    resultBox.className =
+                        "face-result error-result";
+
+
+                    captureButton.disabled =
+                        false;
+
+                }
+
+            }
+        );
+
+    </script>
+
+
+</body>
+
+</html>

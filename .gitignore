@@ -1,0 +1,47 @@
+﻿
+# Python cache and virtual environments
+__pycache__/
+*.py[cod]
+*.pyd
+.venv/
+.venv_tf_test/
+venv/
+env/
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Biometric data and personal images
+face_data/
+face_data_backup/
+*.before_duplicate_test.jpg
+
+# Database backups and data
+database/backups/
+database/*backup*.sql
+*.sql
+*.sql.gz
+*.sqlite
+*.db
+
+# Local dependency backup
+requirements-current-backup.txt
+
+# Testing artifacts
+.pytest_cache/
+.coverage
+
+# Editor and operating system files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Temporary source-code backups
+*.bak
+*.before_*
+
+# Local demo account scripts
+create_demo_admin.py
+create_demo_voter.py
