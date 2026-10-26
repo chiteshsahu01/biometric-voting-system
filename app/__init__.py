@@ -141,7 +141,15 @@ def create_app():
                 voter_id=voter.voter_id
             ).first()
 
+            
             if voter.status == "PENDING":
+
+                # Set voter session before redirecting
+                session.clear()
+                session["user_id"] = voter.voter_id
+                session["voter_id"] = voter.voter_id
+                session["voter_name"] = voter.full_name
+                session["role"] = "VOTER"
 
                 if verification and verification.verification_status == "VERIFIED":
                     voter.status = "VERIFIED"
